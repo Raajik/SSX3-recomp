@@ -6,6 +6,12 @@
  *
  * main = up presses on the main menu before A (0 = the cursor's item, Single
  * Event);
+ *
+ *   RECOMP_AUTONAV=keys:up,up,a,down,a
+ *
+ * keys: for menu tests, once the main menu takes input, press these buttons
+ * (up down left right a b x y start back) 700 ms apart, log
+ * "[AUTONAV] keys done" and stop.
  * rider = right presses on Select Character, peak = down presses on the
  * peak page (0-2: up presses, the list is Peak 3, 2, 1 with the cursor on 1;
  * Peaks 2/3 need the unlocked save), mode = down presses on the mode
@@ -238,9 +244,46 @@ static int opt(const char *spec, const char *key)
     return p ? atoi(p + strlen(key)) : 0;
 }
 
+static char s_keys[256];
+
+static DWORD WINAPI keys_thread(LPVOID unused)
+{
+    char buf[256], *tok, *save = NULL;
+    (void)unused;
+    DWORD start_at = 0;
+    for (;;) {                                  /* Start on the title, then the main menu */
+        uint32_t sp = g_ssx3_ui_screen_ptr;
+        int ready = app_vt() == VT_FRONTEND && sp && ((MEM16(sp + 0x1C) >> 8) & 0x3F) == 5;
+        Sleep(50);
+        if (ready && g_ssx3_ui_screen_id == 2)
+            break;
+        if (ready && g_ssx3_ui_screen_id == 0 && GetTickCount() - start_at > 1500) {
+            press("start:150", "title");
+            start_at = GetTickCount();
+        }
+    }
+    Sleep(500);
+    snprintf(buf, sizeof buf, "%s", s_keys);
+    for (tok = strtok_r(buf, ",", &save); tok; tok = strtok_r(NULL, ",", &save)) {
+        char b[32];
+        snprintf(b, sizeof b, "%s:150", tok);
+        press(b, "keys");
+        Sleep(700);
+    }
+    fprintf(stderr, "[AUTONAV] keys done\n");
+    fflush(stderr);
+    return 0;
+}
+
 void ssx3_AutonavStart(void)
 {
     const char *e = getenv("RECOMP_AUTONAV");
+    if (e && !strncmp(e, "keys:", 5)) {
+        snprintf(s_keys, sizeof s_keys, "%s", e + 5);
+        s_t0 = GetTickCount();
+        CloseHandle(CreateThread(NULL, 0, keys_thread, NULL, 0, NULL));
+        return;
+    }
     if (!e || strncmp(e, "race", 4) != 0)
         return;
     s_main = opt(e, "main=");

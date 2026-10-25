@@ -2,8 +2,10 @@
  * RECOMP_AUTONAV: drive the frontend from inside the process, from boot to a
  * race, by the game's own state -- the in-process twin of tools\to_race.ps1.
  *
- *   RECOMP_AUTONAV=race[,rider=N][,peak=N][,mode=N][,event=N][,brief]
+ *   RECOMP_AUTONAV=race[,main=N][,rider=N][,peak=N][,mode=N][,event=N][,brief]
  *
+ * main = up presses on the main menu before A (0 = the cursor's item, Single
+ * Event);
  * rider = right presses on Select Character, peak = down presses on the
  * peak page (0-2: up presses, the list is Peak 3, 2, 1 with the cursor on 1;
  * Peaks 2/3 need the unlocked save), mode = down presses on the mode
@@ -48,7 +50,7 @@
 extern int xbox_PadInject(const char *line);
 extern volatile uint32_t g_ssx3_ui_screen_vt, g_ssx3_ui_screen_id, g_ssx3_ui_screen_ptr;
 
-static int s_rider, s_peak, s_mode, s_event, s_brief;
+static int s_main, s_rider, s_peak, s_mode, s_event, s_brief;
 static DWORD s_t0;
 /* Set when autonav reaches the briefing (RECOMP_VKR_TRACE_BRIEF times from it). */
 volatile int g_ssx3_at_briefing;
@@ -85,7 +87,7 @@ static uint32_t app_vt(void)
 
 static DWORD WINAPI autonav_thread(LPVOID unused)
 {
-    uint32_t act_ptr = 0, done_ptr = 0;
+    uint32_t act_ptr = 0, done_ptr = 0, done_id = 0;
     DWORD act_since = 0, done_at = 0, ingame_since = 0, brief_since = 0;
     int loading_seen = 0, skipped = 0;
     uint32_t last_sp = 0, pre_ingame_sp = 0;
@@ -181,7 +183,9 @@ static DWORD WINAPI autonav_thread(LPVOID unused)
             continue;
         if (id == 1)                    /* "Checking hard disk": goes on by itself */
             continue;
-        if (sp == done_ptr) {
+        /* A new screen can reuse the last one's memory (title -> main menu): same
+         * pointer and same id is a dropped press, a new id is a new screen. */
+        if (sp == done_ptr && id == done_id) {
             /* Still up: the press was dropped (or a page sequence is still
              * running on the Peak/Mode/Event screen). Retry, plainly. */
             DWORD retry = id == 19 ? 6000 : 1500;
@@ -192,10 +196,15 @@ static DWORD WINAPI autonav_thread(LPVOID unused)
             continue;
         }
         done_ptr = sp;
+        done_id = id;
         done_at = now;
         switch (id) {
         case 0:                                     /* title */
             press("start:150", "title");
+            break;
+        case 2:                                     /* main menu */
+            presses("up:100", s_main, 300, "main menu");
+            press("a:150", "main menu");
             break;
         case 9:                                     /* Select Character */
             presses("right:100", s_rider, 300, "rider");
@@ -234,6 +243,7 @@ void ssx3_AutonavStart(void)
     const char *e = getenv("RECOMP_AUTONAV");
     if (!e || strncmp(e, "race", 4) != 0)
         return;
+    s_main = opt(e, "main=");
     s_rider = opt(e, "rider=");
     s_peak = opt(e, "peak=");
     s_mode = opt(e, "mode=");

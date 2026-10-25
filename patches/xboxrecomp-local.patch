@@ -1,7 +1,7 @@
-diff --git c/src/apu/CMakeLists.txt i/src/apu/CMakeLists.txt
+diff --git c/src/apu/CMakeLists.txt w/src/apu/CMakeLists.txt
 index 0bd4ebd..70568cb 100644
 --- c/src/apu/CMakeLists.txt
-+++ i/src/apu/CMakeLists.txt
++++ w/src/apu/CMakeLists.txt
 @@ -40,6 +40,9 @@ if(WIN32)
      # target to actually call into the APU failed at link with an undefined
      # XAudio2Create rather than at build time here.
@@ -12,10 +12,10 @@ index 0bd4ebd..70568cb 100644
  else()
      # Linux: platform layer (Win32 primitives on POSIX) + SDL2 audio + libm
      find_package(SDL2 REQUIRED)
-diff --git c/src/apu/apu_core.c i/src/apu/apu_core.c
+diff --git c/src/apu/apu_core.c w/src/apu/apu_core.c
 index 258048c..9760f17 100644
 --- c/src/apu/apu_core.c
-+++ i/src/apu/apu_core.c
++++ w/src/apu/apu_core.c
 @@ -20,6 +20,7 @@
   */
  
@@ -310,10 +310,10 @@ index 258048c..9760f17 100644
      /* Start background frame thread */
      qemu_thread_create(&d->apu_thread, "mcpx.apu_thread",
                         mcpx_apu_frame_thread, d, QEMU_THREAD_JOINABLE);
-diff --git c/src/apu/apu_dsp.c i/src/apu/apu_dsp.c
+diff --git c/src/apu/apu_dsp.c w/src/apu/apu_dsp.c
 index 7156be9..622dbb0 100644
 --- c/src/apu/apu_dsp.c
-+++ i/src/apu/apu_dsp.c
++++ w/src/apu/apu_dsp.c
 @@ -23,8 +23,13 @@
   */
  
@@ -408,10 +408,10 @@ index 7156be9..622dbb0 100644
                      if (b & 1) right += mixbins[b][i];
                      else       left  += mixbins[b][i];
                  }
-diff --git c/src/apu/apu_vp.c i/src/apu/apu_vp.c
+diff --git c/src/apu/apu_vp.c w/src/apu/apu_vp.c
 index f45b42b..d03ef75 100644
 --- c/src/apu/apu_vp.c
-+++ i/src/apu/apu_vp.c
++++ w/src/apu/apu_vp.c
 @@ -140,10 +140,16 @@ static void voice_off(MCPXAPUState *d, uint16_t v)
      set_notify_status(d, v, notifier, NV1BA0_NOTIFICATION_STATUS_DONE_SUCCESS);
  }
@@ -429,10 +429,10 @@ index f45b42b..d03ef75 100644
  
      uint64_t mask = 1ULL << (v % 64);
      if (lock) {
-diff --git c/src/apu/apu_xaudio2.c i/src/apu/apu_xaudio2.c
+diff --git c/src/apu/apu_xaudio2.c w/src/apu/apu_xaudio2.c
 index cd69e57..e7e3053 100644
 --- c/src/apu/apu_xaudio2.c
-+++ i/src/apu/apu_xaudio2.c
++++ w/src/apu/apu_xaudio2.c
 @@ -11,8 +11,8 @@
  #include <string.h>
  #include "apu_xaudio2.h"
@@ -913,10 +913,10 @@ index cd69e57..e7e3053 100644
 +}
  
  #endif /* _WIN32 */
-diff --git c/src/apu/apu_xaudio2.h i/src/apu/apu_xaudio2.h
+diff --git c/src/apu/apu_xaudio2.h w/src/apu/apu_xaudio2.h
 index 83e652d..235e61f 100644
 --- c/src/apu/apu_xaudio2.h
-+++ i/src/apu/apu_xaudio2.h
++++ w/src/apu/apu_xaudio2.h
 @@ -18,7 +18,16 @@ int xa2_is_active(void);
  /* Submit interleaved stereo 16-bit samples. Returns 1 if accepted. */
  int xa2_submit_samples(const int16_t *samples, int num_samples);
@@ -934,10 +934,10 @@ index 83e652d..235e61f 100644
 +void xa2_take_stats(int *underruns, int *drops, int *min_queued, int *waits, int *refills);
  
  #endif /* APU_XAUDIO2_H */
-diff --git c/src/d3d/CMakeLists.txt i/src/d3d/CMakeLists.txt
+diff --git c/src/d3d/CMakeLists.txt w/src/d3d/CMakeLists.txt
 index bb42c28..973b6c7 100644
 --- c/src/d3d/CMakeLists.txt
-+++ i/src/d3d/CMakeLists.txt
++++ w/src/d3d/CMakeLists.txt
 @@ -17,6 +17,12 @@ if(WIN32)
      # Offline smoke test for the pure format layer (no D3D11 device needed).
      add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../../tests/d3d8_smoke
@@ -951,10 +951,10 @@ index bb42c28..973b6c7 100644
  else()
      add_library(xbox_d3d8 STATIC
          d3d8_gl.c
-diff --git c/src/input/CMakeLists.txt i/src/input/CMakeLists.txt
+diff --git c/src/input/CMakeLists.txt w/src/input/CMakeLists.txt
 index caef326..6d5d794 100644
 --- c/src/input/CMakeLists.txt
-+++ i/src/input/CMakeLists.txt
++++ w/src/input/CMakeLists.txt
 @@ -8,6 +8,8 @@ target_include_directories(xbox_input PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
  
  if(WIN32)
@@ -964,10 +964,10 @@ index caef326..6d5d794 100644
  else()
      find_package(SDL2 REQUIRED)
      target_link_libraries(xbox_input PUBLIC platform SDL2::SDL2)
-diff --git c/src/input/xinput_device.c i/src/input/xinput_device.c
+diff --git c/src/input/xinput_device.c w/src/input/xinput_device.c
 index a91edbe..ae120d6 100644
 --- c/src/input/xinput_device.c
-+++ i/src/input/xinput_device.c
++++ w/src/input/xinput_device.c
 @@ -13,6 +13,135 @@
  #include "xinput_xbox.h"
  #include <stdlib.h>
@@ -1507,11 +1507,19 @@ index a91edbe..ae120d6 100644
      return ERROR_SUCCESS;
  }
  
-diff --git c/src/kernel/CMakeLists.txt i/src/kernel/CMakeLists.txt
-index a045752..d2df24b 100644
+diff --git c/src/kernel/CMakeLists.txt w/src/kernel/CMakeLists.txt
+index a045752..6e2afac 100644
 --- c/src/kernel/CMakeLists.txt
-+++ i/src/kernel/CMakeLists.txt
-@@ -21,6 +21,7 @@ set(KERNEL_SOURCES
++++ w/src/kernel/CMakeLists.txt
+@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.20)
+ 
+ set(KERNEL_SOURCES
+     kernel_path.c
++    kernel_mods.c
+     kernel_pool.c
+     kernel_rtl.c
+     kernel_memory.c
+@@ -21,6 +22,7 @@ set(KERNEL_SOURCES
      kernel_bridge.c
      xbox_memory_layout.c
      guest_vmem.c
@@ -1519,7 +1527,7 @@ index a045752..d2df24b 100644
      icall_feedback.c
      recomp_trace.c
      nv2a_pb_scan.c
-@@ -44,6 +45,9 @@ if(WIN32)
+@@ -44,6 +46,9 @@ if(WIN32)
      # platform is an INTERFACE target on Windows: it contributes the src/
      # include path that "platform/xbox_winnt.h" resolves against.
      target_link_libraries(xbox_kernel PUBLIC platform kernel32 bcrypt)
@@ -1529,10 +1537,10 @@ index a045752..d2df24b 100644
  else()
      # Linux: platform layer (POSIX host primitives) + OpenSSL for crypto.
      find_package(OpenSSL REQUIRED)
-diff --git c/src/kernel/README.md i/src/kernel/README.md
+diff --git c/src/kernel/README.md w/src/kernel/README.md
 index f0437c9..5142ddc 100644
 --- c/src/kernel/README.md
-+++ i/src/kernel/README.md
++++ w/src/kernel/README.md
 @@ -161,6 +161,14 @@ Z:\cache.dat                 → <save_dir>\cache\cache.dat
  xbox_path_init("Burnout 3 Takedown", "saves");
  ```
@@ -1548,11 +1556,11 @@ index f0437c9..5142ddc 100644
  ## Threading
  
  Xbox threads use `PsCreateSystemThreadEx` with NT-style parameters. We create Win32 threads with a wrapper that sets up the register context:
-diff --git c/src/kernel/guest_ptr.h i/src/kernel/guest_ptr.h
+diff --git c/src/kernel/guest_ptr.h w/src/kernel/guest_ptr.h
 new file mode 100644
 index 0000000..c24d5b4
 --- /dev/null
-+++ i/src/kernel/guest_ptr.h
++++ w/src/kernel/guest_ptr.h
 @@ -0,0 +1,27 @@
 +/* Guest VA -> host pointer, for host code that reads or writes guest memory
 + * (device models, bridges, diagnostics).
@@ -1581,11 +1589,11 @@ index 0000000..c24d5b4
 +uint32_t xbox_HostToGuest(const void *host);
 +
 +#endif
-diff --git c/src/kernel/guest_wasm.c i/src/kernel/guest_wasm.c
+diff --git c/src/kernel/guest_wasm.c w/src/kernel/guest_wasm.c
 new file mode 100644
 index 0000000..45b6a74
 --- /dev/null
-+++ i/src/kernel/guest_wasm.c
++++ w/src/kernel/guest_wasm.c
 @@ -0,0 +1,113 @@
 +/*
 + * Guest address space for the WebAssembly build.
@@ -1700,10 +1708,10 @@ index 0000000..45b6a74
 +    return (void *)(uintptr_t)(guest_base + g_xbox_pagemap[guest_base >> 20]);
 +}
 +#endif
-diff --git c/src/kernel/kernel.h i/src/kernel/kernel.h
+diff --git c/src/kernel/kernel.h w/src/kernel/kernel.h
 index b9a02bc..ee87394 100644
 --- c/src/kernel/kernel.h
-+++ i/src/kernel/kernel.h
++++ w/src/kernel/kernel.h
 @@ -115,6 +115,9 @@ enum {
  #ifndef STATUS_ACCESS_DENIED
  #define STATUS_ACCESS_DENIED            ((NTSTATUS)0xC0000022L)
@@ -1738,10 +1746,10 @@ index b9a02bc..ee87394 100644
  NTSTATUS __stdcall xbox_NtFlushBuffersFile(HANDLE FileHandle, PXBOX_IO_STATUS_BLOCK IoStatusBlock);
  
  NTSTATUS __stdcall xbox_NtQueryFullAttributesFile(
-diff --git c/src/kernel/kernel_bridge.c i/src/kernel/kernel_bridge.c
+diff --git c/src/kernel/kernel_bridge.c w/src/kernel/kernel_bridge.c
 index c65ba43..b8dbb5d 100644
 --- c/src/kernel/kernel_bridge.c
-+++ i/src/kernel/kernel_bridge.c
++++ w/src/kernel/kernel_bridge.c
 @@ -26,6 +26,7 @@
   */
  
@@ -3140,10 +3148,10 @@ index c65ba43..b8dbb5d 100644
          g_thunk_table_count * 4,
          old_protect,
          &old_protect
-diff --git c/src/kernel/kernel_file.c i/src/kernel/kernel_file.c
+diff --git c/src/kernel/kernel_file.c w/src/kernel/kernel_file.c
 index 42135e0..46359b4 100644
 --- c/src/kernel/kernel_file.c
-+++ i/src/kernel/kernel_file.c
++++ w/src/kernel/kernel_file.c
 @@ -18,6 +18,7 @@
  #include "kernel.h"
  #include <string.h>
@@ -3782,10 +3790,10 @@ index 42135e0..46359b4 100644
 +    }
 +    return st;
 +}
-diff --git c/src/kernel/kernel_hal.c i/src/kernel/kernel_hal.c
+diff --git c/src/kernel/kernel_hal.c w/src/kernel/kernel_hal.c
 index 1ad4fff..7ba275f 100644
 --- c/src/kernel/kernel_hal.c
-+++ i/src/kernel/kernel_hal.c
++++ w/src/kernel/kernel_hal.c
 @@ -12,6 +12,7 @@
   */
  
@@ -3888,19 +3896,175 @@ index 1ad4fff..7ba275f 100644
      ExitProcess(0);
  }
  
-diff --git c/src/kernel/kernel_path.c i/src/kernel/kernel_path.c
-index caf6390..31cbcab 100644
+diff --git c/src/kernel/kernel_mods.c w/src/kernel/kernel_mods.c
+new file mode 100644
+index 0000000..d44212d
+--- /dev/null
++++ w/src/kernel/kernel_mods.c
+@@ -0,0 +1,73 @@
++/* Asset mods: whole-file overrides of the game folder (kernel_mods.h). */
++#include "kernel_mods.h"
++
++#include <stdio.h>
++#include <string.h>
++
++static char s_dir[512];
++static char s_names[XBOX_MODS_MAX][128];
++static int s_count;
++
++/* A mod name is one folder inside the mods dir: no separators, no "..". */
++static int name_ok(const char *s)
++{
++    return *s && !strchr(s, '/') && !strchr(s, '\\') && !strstr(s, "..");
++}
++
++int xbox_mods_init(const char *mods_dir)
++{
++    char path[640], line[256];
++    FILE *f;
++
++    s_count = 0;
++    snprintf(s_dir, sizeof s_dir, "%s", mods_dir ? mods_dir : "");
++    if (!s_dir[0])
++        return 0;
++    snprintf(path, sizeof path, "%s/load-order.txt", s_dir);
++    if (!(f = fopen(path, "r")))
++        return 0;
++    while (s_count < XBOX_MODS_MAX && fgets(line, sizeof line, f)) {
++        char *s = line, *e;
++        while (*s == ' ' || *s == '\t')
++            s++;
++        e = s + strlen(s);
++        while (e > s && (e[-1] == '\n' || e[-1] == '\r' || e[-1] == ' ' || e[-1] == '\t'))
++            *--e = '\0';
++        if (*s == '#' || !name_ok(s) || (size_t)(e - s) >= sizeof s_names[0])
++            continue;
++        snprintf(s_names[s_count++], sizeof s_names[0], "%s", s);
++    }
++    fclose(f);
++    return s_count;
++}
++
++int xbox_mods_count(void)
++{
++    return s_count;
++}
++
++const char *xbox_mods_dir(void)
++{
++    return s_dir;
++}
++
++const char *xbox_mods_name(int i)
++{
++    return i >= 0 && i < s_count ? s_names[i] : NULL;
++}
++
++int xbox_mods_lookup(const char *rel, char *out, size_t out_size, int (*exists)(char *path))
++{
++    int i;
++    if (!s_count || !rel || !*rel || strstr(rel, ".."))
++        return 0;
++    while (*rel == '/')
++        rel++;
++    for (i = s_count - 1; i >= 0; i--) {
++        if ((size_t)snprintf(out, out_size, "%s/%s/%s", s_dir, s_names[i], rel) >= out_size)
++            continue;
++        if (exists(out))
++            return i + 1;
++    }
++    return 0;
++}
+diff --git c/src/kernel/kernel_mods.h w/src/kernel/kernel_mods.h
+new file mode 100644
+index 0000000..87483f7
+--- /dev/null
++++ w/src/kernel/kernel_mods.h
+@@ -0,0 +1,38 @@
++/*
++ * Asset mods: whole-file overrides of the game folder.
++ *
++ * <mods dir>/load-order.txt lists the enabled mods, one folder name per line
++ * (blank lines and lines starting with '#' are skipped); a later line wins
++ * over an earlier one. Each mod folder mirrors the game folder, so
++ * mods/<name>/data/x.big replaces game/data/x.big. Mods are only read.
++ */
++#ifndef XBOX_KERNEL_MODS_H
++#define XBOX_KERNEL_MODS_H
++
++#include <stddef.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#define XBOX_MODS_MAX 64
++
++/* Reads <mods_dir>/load-order.txt. Returns the number of mods enabled (0 when
++ * the folder or the file is missing). Calling it again starts over. */
++int xbox_mods_init(const char *mods_dir);
++
++int xbox_mods_count(void);
++const char *xbox_mods_dir(void);        /* the folder given to xbox_mods_init */
++const char *xbox_mods_name(int i);      /* in load order, 0 = lowest priority */
++
++/* rel: a path relative to the game folder, '/' separators. Tries each enabled
++ * mod, last first. exists() gets a candidate host path, may fix its letter case
++ * in place, and returns nonzero when that file is there. On a hit the host
++ * path is in out and the return value is the mod's index + 1; 0 = no mod has it. */
++int xbox_mods_lookup(const char *rel, char *out, size_t out_size, int (*exists)(char *path));
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
+diff --git c/src/kernel/kernel_path.c w/src/kernel/kernel_path.c
+index caf6390..36a6f66 100644
 --- c/src/kernel/kernel_path.c
-+++ i/src/kernel/kernel_path.c
-@@ -16,6 +16,7 @@
++++ w/src/kernel/kernel_path.c
+@@ -16,6 +16,40 @@
  #include <stdio.h>
  #include <string.h>
  #include <ctype.h>
++#include <stdint.h>
++#include <stdlib.h>
++#include "kernel_mods.h"
++
++/* Asset mods (kernel_mods.h): RECOMP_MODS_DIR, default "mods" in the working
++ * directory. Read when the paths are set up; game-folder opens look there first. */
++static void mods_setup(void)
++{
++    const char *d = getenv("RECOMP_MODS_DIR");
++    int n = xbox_mods_init(d && *d ? d : "mods");
++    for (int i = 0; i < n; i++)
++        xbox_log(XBOX_LOG_INFO, XBOX_LOG_PATH, "asset mod %d of %d: %s", i + 1, n, xbox_mods_name(i));
++}
++
++/* Logs a replaced file the first time only: the streamer reopens archives. */
++static void mods_log_hit(const char *rel, int mod)
++{
++    static uint32_t seen[1024];
++    uint32_t h = 2166136261u;
++    for (const char *s = rel; *s; s++)
++        h = (h ^ (uint32_t)tolower((unsigned char)*s)) * 16777619u;
++    h |= 1;                                     /* 0 marks an empty slot */
++    for (uint32_t i = 0; i < 1024; i++) {
++        uint32_t *slot = &seen[(h + i) & 1023];
++        if (*slot == h)
++            return;
++        if (!*slot) {
++            *slot = h;
++            break;
++        }
++    }
++    xbox_log(XBOX_LOG_INFO, XBOX_LOG_PATH, "asset mod %s replaces %s", xbox_mods_name(mod - 1), rel);
++}
 +#include <stdlib.h>
  
  /* A project may set this to watch every guest path the kernel translates (for
   * example to print who opened a file). NULL by default. */
-@@ -40,13 +41,26 @@ static int match_prefix(const char* path, const char* prefix)
+@@ -40,13 +74,26 @@ static int match_prefix(const char* path, const char* prefix)
  /* A device-path translation rule, shared by both backends. */
  typedef struct {
      const char* prefix;     /* Xbox path prefix (backslash form)         */
@@ -3928,7 +4092,7 @@ index caf6390..31cbcab 100644
      { "\\Device\\Harddisk0\\Partition1\\",    0, NULL,         NULL          },
      /* The rest of the disk. Partition 0 is the whole raw device, 2 holds
       * system data, and 3-5 are the per-title caches behind X:, Y: and Z:.
-@@ -85,6 +99,25 @@ static const path_rule s_rules[] = {
+@@ -85,6 +132,25 @@ static const path_rule s_rules[] = {
  };
  #define PATH_RULE_COUNT ((int)(sizeof(s_rules) / sizeof(s_rules[0])))
  
@@ -3954,7 +4118,7 @@ index caf6390..31cbcab 100644
  /*
   * Rewrite a path through a drive letter the title mapped for itself.
   *
-@@ -156,6 +189,7 @@ static int resolve_symlink(const char* xbox_path, char* out, size_t out_size)
+@@ -156,6 +222,7 @@ static int resolve_symlink(const char* xbox_path, char* out, size_t out_size)
      return 0;
  }
  
@@ -3962,7 +4126,7 @@ index caf6390..31cbcab 100644
  /* ======================================================================== */
  /* Shared by both backends, for the same reason as xbox_LastFileError: the
   * bridge calls it unconditionally, and a _WIN32-only definition breaks every
-@@ -176,6 +210,7 @@ const wchar_t *xbox_LastHostPath(void)
+@@ -176,6 +243,7 @@ const wchar_t *xbox_LastHostPath(void)
  
  static WCHAR s_game_dir[MAX_PATH];
  static WCHAR s_save_dir[MAX_PATH];
@@ -3970,7 +4134,16 @@ index caf6390..31cbcab 100644
  static BOOL  s_initialized = FALSE;
  
  /*
-@@ -374,8 +409,54 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
+@@ -274,6 +342,8 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
+ {
+     WCHAR save_base[MAX_PATH];
+ 
++    mods_setup();
++
+     /* The fallbacks used to name Burnout 3 specifically, so any other title
+      * that passed NULL silently pointed its game dir and its saves at another
+      * game's folders. Generic now -- a caller that wants a title-specific
+@@ -374,8 +444,54 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
          }
      }
  
@@ -4026,7 +4199,24 @@ index caf6390..31cbcab 100644
  }
  
  /* The host path the last translation produced.
-@@ -420,10 +501,13 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
+@@ -394,6 +510,16 @@ static void xbox_remember_host_path(const wchar_t *p)
+ 
+ 
+ 
++/* For xbox_mods_lookup: Windows paths are case-insensitive already. */
++static int win_file_exists(char *path)
++{
++    WCHAR w[MAX_PATH];
++    DWORD a;
++    MultiByteToWideChar(CP_UTF8, 0, path, -1, w, MAX_PATH);
++    a = GetFileAttributesW(w);
++    return a != INVALID_FILE_ATTRIBUTES && !(a & FILE_ATTRIBUTE_DIRECTORY);
++}
++
+ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, DWORD buf_size)
+ {
+     const char*  remainder = NULL;
+@@ -420,10 +546,13 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
      }
  
      for (int i = 0; i < PATH_RULE_COUNT; i++) {
@@ -4042,15 +4232,30 @@ index caf6390..31cbcab 100644
              sub_dir   = s_rules[i].sub_win;
              goto translate;
          }
-@@ -446,6 +530,7 @@ translate:
+@@ -446,6 +575,22 @@ translate:
              if (*p == L'/') *p = L'\\';
          }
  
++        if (!sub_dir && base_dir == s_game_dir) {   /* a game file: an asset mod may replace it */
++            char rel[MAX_PATH], mod_path[MAX_PATH];
++            int mod;
++            snprintf(rel, sizeof(rel), "%s", remainder);
++            for (char* p = rel; *p; p++)
++                if (*p == '\\') *p = '/';
++            if ((mod = xbox_mods_lookup(rel, mod_path, sizeof(mod_path), win_file_exists)) != 0) {
++                mods_log_hit(rel, mod);
++                MultiByteToWideChar(CP_UTF8, 0, mod_path, -1, host_path_buf, buf_size);
++                for (WCHAR* p = host_path_buf; *p; p++)
++                    if (*p == L'/') *p = L'\\';
++                xbox_remember_host_path(host_path_buf);
++                return TRUE;
++            }
++        }
 +
          if (sub_dir) {
              WCHAR sub_wide[MAX_PATH];
              MultiByteToWideChar(CP_ACP, 0, sub_dir, -1, sub_wide, MAX_PATH);
-@@ -453,7 +538,7 @@ translate:
+@@ -453,7 +598,7 @@ translate:
  
              WCHAR dir_path[MAX_PATH];
              swprintf_s(dir_path, MAX_PATH, L"%s%s", base_dir, sub_wide);
@@ -4059,7 +4264,7 @@ index caf6390..31cbcab 100644
              CreateDirectoryW(dir_path, NULL);
          } else {
              swprintf_s(host_path_buf, buf_size, L"%s\\%s", base_dir, remainder_wide);
-@@ -485,9 +570,14 @@ translate:
+@@ -485,9 +630,14 @@ translate:
  #include <sys/stat.h>
  #include <sys/types.h>
  #include <errno.h>
@@ -4074,7 +4279,7 @@ index caf6390..31cbcab 100644
  static BOOL s_initialized = FALSE;
  
  /* Strip a single trailing '/' (but never the root '/'). */
-@@ -519,6 +609,8 @@ static void mkdir_p(const char* path)
+@@ -519,8 +669,11 @@ static void mkdir_p(const char* path)
          xbox_log(XBOX_LOG_WARN, XBOX_LOG_PATH, "mkdir %s: %s", tmp, strerror(errno));
  }
  
@@ -4082,8 +4287,11 @@ index caf6390..31cbcab 100644
 +
  void xbox_path_init(const char* game_dir, const char* save_dir)
  {
++    mods_setup();
      if (game_dir) {
-@@ -548,9 +640,202 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
+         snprintf(s_game_dir, sizeof(s_game_dir), "%s", game_dir);
+     } else {
+@@ -548,9 +701,212 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
      strip_trailing_slash(s_game_dir);
      strip_trailing_slash(s_save_dir);
  
@@ -4140,6 +4348,16 @@ index caf6390..31cbcab 100644
 + * exist, walk it component by component and substitute the on-disk spelling
 + * of any component that only differs in case. Leaves `path` alone when no
 + * match exists (a create, for instance). */
++static void fix_path_case(char *path);
++
++/* For xbox_mods_lookup: the candidate's case fixed as for game files, then a file test. */
++static int posix_file_exists(char *path)
++{
++    struct stat st;
++    fix_path_case(path);
++    return stat(path, &st) == 0 && S_ISREG(st.st_mode);
++}
++
 +static void fix_path_case(char *path)
 +{
 +    char out[MAX_PATH];
@@ -4288,7 +4506,7 @@ index caf6390..31cbcab 100644
  }
  
  BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, DWORD buf_size)
-@@ -566,6 +851,9 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
+@@ -566,6 +922,9 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
      if (!s_initialized)
          xbox_path_init(NULL, NULL);
  
@@ -4298,7 +4516,7 @@ index caf6390..31cbcab 100644
      {
          char linked[512];
          if (resolve_symlink(xbox_path, linked, sizeof(linked)))
-@@ -573,10 +861,13 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
+@@ -573,10 +932,13 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
      }
  
      for (int i = 0; i < PATH_RULE_COUNT; i++) {
@@ -4314,19 +4532,28 @@ index caf6390..31cbcab 100644
              sub_dir   = s_rules[i].sub_posix;
              goto translate;
          }
-@@ -616,6 +907,8 @@ translate:
+@@ -616,6 +978,17 @@ translate:
                  host_path_buf[--n] = '\0';
          }
  
++        if (!sub_dir && base_dir == s_game_dir) {   /* a game file: an asset mod may replace it */
++            char mod_path[MAX_PATH];
++            int mod = xbox_mods_lookup(remainder_posix, mod_path, sizeof(mod_path), posix_file_exists);
++            if (mod) {
++                mods_log_hit(remainder_posix, mod);
++                snprintf(host_path_buf, buf_size, "%s", mod_path);
++                return TRUE;
++            }
++        }
 +
 +        fix_path_case(host_path_buf);
          XBOX_TRACE(XBOX_LOG_PATH, "%s -> %s", xbox_path, host_path_buf);
          return TRUE;
      }
-diff --git c/src/kernel/kernel_rtl.c i/src/kernel/kernel_rtl.c
+diff --git c/src/kernel/kernel_rtl.c w/src/kernel/kernel_rtl.c
 index 9760735..1f5cc05 100644
 --- c/src/kernel/kernel_rtl.c
-+++ i/src/kernel/kernel_rtl.c
++++ w/src/kernel/kernel_rtl.c
 @@ -8,6 +8,7 @@
   */
  
@@ -4414,10 +4641,10 @@ index 9760735..1f5cc05 100644
  VOID __stdcall xbox_RtlInitializeCriticalSection(PRTL_CRITICAL_SECTION CriticalSection)
  {
      /* Creating the shadow here is not required -- Enter does it -- but doing
-diff --git c/src/kernel/kernel_thunks.c i/src/kernel/kernel_thunks.c
+diff --git c/src/kernel/kernel_thunks.c w/src/kernel/kernel_thunks.c
 index 4fd7692..d943575 100644
 --- c/src/kernel/kernel_thunks.c
-+++ i/src/kernel/kernel_thunks.c
++++ w/src/kernel/kernel_thunks.c
 @@ -18,6 +18,7 @@
   */
  
@@ -4435,10 +4662,10 @@ index 4fd7692..d943575 100644
              if (entry == 0) {
                  break;  /* rest of the table is empty */
              }
-diff --git c/src/kernel/kernel_xbox.c i/src/kernel/kernel_xbox.c
+diff --git c/src/kernel/kernel_xbox.c w/src/kernel/kernel_xbox.c
 index 4ebdfb9..2134e8a 100644
 --- c/src/kernel/kernel_xbox.c
-+++ i/src/kernel/kernel_xbox.c
++++ w/src/kernel/kernel_xbox.c
 @@ -11,6 +11,9 @@
  
  #include "kernel.h"
@@ -4610,11 +4837,11 @@ index 4ebdfb9..2134e8a 100644
      default:
          xbox_log(XBOX_LOG_WARN, XBOX_LOG_XBOX,
              "ExQueryNonVolatileSetting: unhandled index 0x%02X", ValueIndex);
-diff --git c/src/kernel/nv2a_backend.h i/src/kernel/nv2a_backend.h
+diff --git c/src/kernel/nv2a_backend.h w/src/kernel/nv2a_backend.h
 new file mode 100644
 index 0000000..2102f59
 --- /dev/null
-+++ i/src/kernel/nv2a_backend.h
++++ w/src/kernel/nv2a_backend.h
 @@ -0,0 +1,99 @@
 +/**
 + * Pluggable GPU backend for the pushbuffer executor.
@@ -4715,10 +4942,10 @@ index 0000000..2102f59
 +void nv2a_exec_set_backend(const Nv2aBackend *b);
 +
 +#endif
-diff --git c/src/kernel/nv2a_pb_exec.c i/src/kernel/nv2a_pb_exec.c
+diff --git c/src/kernel/nv2a_pb_exec.c w/src/kernel/nv2a_pb_exec.c
 index c65632c..35cb429 100644
 --- c/src/kernel/nv2a_pb_exec.c
-+++ i/src/kernel/nv2a_pb_exec.c
++++ w/src/kernel/nv2a_pb_exec.c
 @@ -25,6 +25,7 @@
   * <prefix>NNN.bmp, so the result can be looked at without a display.
   */
@@ -6625,10 +6852,10 @@ index c65632c..35cb429 100644
 +        fputc('\n', f);
 +    }
 +}
-diff --git c/src/kernel/nv2a_pb_scan.c i/src/kernel/nv2a_pb_scan.c
+diff --git c/src/kernel/nv2a_pb_scan.c w/src/kernel/nv2a_pb_scan.c
 index 65bbedb..410e2df 100644
 --- c/src/kernel/nv2a_pb_scan.c
-+++ i/src/kernel/nv2a_pb_scan.c
++++ w/src/kernel/nv2a_pb_scan.c
 @@ -1,3 +1,5 @@
 +#include "kernel.h"
 +#include "guest_ptr.h"
@@ -6858,10 +7085,10 @@ index 65bbedb..410e2df 100644
  {
      uint32_t words, jumps = 0, unknown = 0;
  
-diff --git c/src/kernel/nv2a_vsh_interp.c i/src/kernel/nv2a_vsh_interp.c
+diff --git c/src/kernel/nv2a_vsh_interp.c w/src/kernel/nv2a_vsh_interp.c
 index 7fae74c..53faba3 100644
 --- c/src/kernel/nv2a_vsh_interp.c
-+++ i/src/kernel/nv2a_vsh_interp.c
++++ w/src/kernel/nv2a_vsh_interp.c
 @@ -39,6 +39,7 @@ static float    s_const[NV2A_VSH_CONSTANTS][4];
  static uint32_t s_load_slot, s_load_word, s_start_slot;
  static uint32_t s_const_load, s_const_word;
@@ -7301,10 +7528,10 @@ index 7fae74c..53faba3 100644
              memcpy(out->fog, outregs[5], sizeof out->fog);
              memcpy(out->tex[0], outregs[9], sizeof out->tex[0]);
              memcpy(out->tex[1], outregs[10], sizeof out->tex[1]);
-diff --git c/src/kernel/nv2a_vsh_interp.h i/src/kernel/nv2a_vsh_interp.h
+diff --git c/src/kernel/nv2a_vsh_interp.h w/src/kernel/nv2a_vsh_interp.h
 index 8acb0af..aa6c0e8 100644
 --- c/src/kernel/nv2a_vsh_interp.h
-+++ i/src/kernel/nv2a_vsh_interp.h
++++ w/src/kernel/nv2a_vsh_interp.h
 @@ -43,12 +43,35 @@ void nv2a_vsh_set_start_slot(uint32_t slot);          /* _PROGRAM_START     */
  void nv2a_vsh_set_constant_load(uint32_t index);      /* _CONSTANT_LOAD     */
  void nv2a_vsh_constant_word(uint32_t word);           /* _CONSTANT(i)       */
@@ -7341,10 +7568,10 @@ index 8acb0af..aa6c0e8 100644
  
  /* Direct access, for the self-test. */
  void nv2a_vsh_set_constant(uint32_t index, const float v[4]);
-diff --git c/src/kernel/recomp_trace.c i/src/kernel/recomp_trace.c
+diff --git c/src/kernel/recomp_trace.c w/src/kernel/recomp_trace.c
 index 0b2d723..f612ac4 100644
 --- c/src/kernel/recomp_trace.c
-+++ i/src/kernel/recomp_trace.c
++++ w/src/kernel/recomp_trace.c
 @@ -12,6 +12,7 @@
   */
  
@@ -7406,10 +7633,10 @@ index 0b2d723..f612ac4 100644
          fputc('\n', stderr);
      fflush(stderr);
  }
-diff --git c/src/kernel/xbox_memory_layout.c i/src/kernel/xbox_memory_layout.c
+diff --git c/src/kernel/xbox_memory_layout.c w/src/kernel/xbox_memory_layout.c
 index 72d5131..2ae386e 100644
 --- c/src/kernel/xbox_memory_layout.c
-+++ i/src/kernel/xbox_memory_layout.c
++++ w/src/kernel/xbox_memory_layout.c
 @@ -191,11 +191,11 @@ static const struct { uint32_t offset; uint32_t busy_mask; } NV2A_ACK[] = {
       *
       * Holding them at zero is correct rather than convenient: nothing here
@@ -8290,10 +8517,10 @@ index 72d5131..2ae386e 100644
  
      if (g_heap_block_count < XBOX_HEAP_MAX_BLOCKS) {
          g_heap_blocks[g_heap_block_count].addr = result;
-diff --git c/src/kernel/xbox_memory_layout.h i/src/kernel/xbox_memory_layout.h
+diff --git c/src/kernel/xbox_memory_layout.h w/src/kernel/xbox_memory_layout.h
 index 53f9d3d..f826168 100644
 --- c/src/kernel/xbox_memory_layout.h
-+++ i/src/kernel/xbox_memory_layout.h
++++ w/src/kernel/xbox_memory_layout.h
 @@ -211,6 +211,8 @@ void *xbox_GetMemoryBase(void);
   * Returns 0 if memory is mapped at original Xbox addresses (ideal case).
   */
@@ -8311,10 +8538,10 @@ index 53f9d3d..f826168 100644
 +uint32_t xbox_TickCountMs(void);
 +
  #endif /* XBOX_MEMORY_LAYOUT_H */
-diff --git c/src/platform/win32_compat.c i/src/platform/win32_compat.c
+diff --git c/src/platform/win32_compat.c w/src/platform/win32_compat.c
 index 93288d5..6568214 100644
 --- c/src/platform/win32_compat.c
-+++ i/src/platform/win32_compat.c
++++ w/src/platform/win32_compat.c
 @@ -35,8 +35,10 @@
  #include <mach/mach.h>
  #include <mach/mach_vm.h>
@@ -8400,10 +8627,10 @@ index 93288d5..6568214 100644
  #else
      struct sysinfo si;
      if (sysinfo(&si) != 0) return FALSE;
-diff --git c/src/platform/win32_compat.h i/src/platform/win32_compat.h
+diff --git c/src/platform/win32_compat.h w/src/platform/win32_compat.h
 index 22762ee..113f9e9 100644
 --- c/src/platform/win32_compat.h
-+++ i/src/platform/win32_compat.h
++++ w/src/platform/win32_compat.h
 @@ -127,6 +127,8 @@ BOOL  DuplicateHandle(HANDLE srcProc, HANDLE src, HANDLE dstProc,
  HANDLE      w32_open_handle(int fd, const char *host_path);
  int         w32_handle_fd(HANDLE h);
@@ -8438,10 +8665,10 @@ index 22762ee..113f9e9 100644
  typedef struct _EXCEPTION_POINTERS
  {
      PEXCEPTION_RECORD ExceptionRecord;
-diff --git c/src/usb/ohci.c i/src/usb/ohci.c
+diff --git c/src/usb/ohci.c w/src/usb/ohci.c
 index 641a94d..63bec1f 100644
 --- c/src/usb/ohci.c
-+++ i/src/usb/ohci.c
++++ w/src/usb/ohci.c
 @@ -7,6 +7,7 @@
   * that decides how the rest gets built.
   */
@@ -8616,10 +8843,10 @@ index 641a94d..63bec1f 100644
  int xbox_OhciHandleMmio(void *ctx, uint32_t xbox_va)
  {
  #if defined(_WIN32)
-diff --git c/src/usb/ohci.h i/src/usb/ohci.h
+diff --git c/src/usb/ohci.h w/src/usb/ohci.h
 index 94ff7b2..2a01b28 100644
 --- c/src/usb/ohci.h
-+++ i/src/usb/ohci.h
++++ w/src/usb/ohci.h
 @@ -40,6 +40,7 @@ int  xbox_OhciOwnsAddress(uint32_t xbox_va);
  /* Service a trapped access. Returns 1 if the faulting instruction was decoded
   * and stepped over. `ctx` is a PCONTEXT; void * keeps windows.h out of here. */
@@ -8628,10 +8855,10 @@ index 94ff7b2..2a01b28 100644
  
  /* Report counts at exit, so a run says whether the driver ever looked. */
  void xbox_OhciReport(void);
-diff --git c/src/usb/usb_gamepad.c i/src/usb/usb_gamepad.c
+diff --git c/src/usb/usb_gamepad.c w/src/usb/usb_gamepad.c
 index bd00f3f..8a4137a 100644
 --- c/src/usb/usb_gamepad.c
-+++ i/src/usb/usb_gamepad.c
++++ w/src/usb/usb_gamepad.c
 @@ -442,6 +442,55 @@ static void pad_script_compact(unsigned long t)
      s_script_len = n;
  }
@@ -8732,10 +8959,10 @@ index bd00f3f..8a4137a 100644
                  npending = 0;
              }
          } else if (npending < sizeof pending - 1) {
-diff --git c/src/usb/usb_gamepad.h i/src/usb/usb_gamepad.h
+diff --git c/src/usb/usb_gamepad.h w/src/usb/usb_gamepad.h
 index 18291d7..e0e9f01 100644
 --- c/src/usb/usb_gamepad.h
-+++ i/src/usb/usb_gamepad.h
++++ w/src/usb/usb_gamepad.h
 @@ -41,6 +41,11 @@ int usb_gamepad_report(int pad, uint8_t *out, int max);
  uint8_t usb_gamepad_address(int pad);
  int usb_gamepad_configured(int pad);
@@ -8748,10 +8975,10 @@ index 18291d7..e0e9f01 100644
  /* Up to four pads, one per Xbox controller port. Pad n is driven by host
   * XInput pad n and by pad-script steps prefixed "p<n+1>-". */
  #define USB_GAMEPAD_MAX 4
-diff --git c/src/video/CMakeLists.txt i/src/video/CMakeLists.txt
+diff --git c/src/video/CMakeLists.txt w/src/video/CMakeLists.txt
 index 2189a3b..4b8e73a 100644
 --- c/src/video/CMakeLists.txt
-+++ i/src/video/CMakeLists.txt
++++ w/src/video/CMakeLists.txt
 @@ -3,12 +3,19 @@ add_library(xbox_video STATIC
      video_player.c
      video_pump.c
@@ -8773,11 +9000,11 @@ index 2189a3b..4b8e73a 100644
 -    target_link_libraries(xbox_video PUBLIC mfplat mfreadwrite mfuuid mf ole32)
 +    target_link_libraries(xbox_video PUBLIC mfplat mfreadwrite mfuuid mf ole32 d3d11 dxgi)
  endif()
-diff --git c/src/video/fb_gamma.c i/src/video/fb_gamma.c
+diff --git c/src/video/fb_gamma.c w/src/video/fb_gamma.c
 new file mode 100644
 index 0000000..165eab0
 --- /dev/null
-+++ i/src/video/fb_gamma.c
++++ w/src/video/fb_gamma.c
 @@ -0,0 +1,76 @@
 +/* The display's gamma ramp.
 + *
@@ -8855,10 +9082,10 @@ index 0000000..165eab0
 +{
 +    return s_lut_serial;
 +}
-diff --git c/src/video/fb_present.c i/src/video/fb_present.c
+diff --git c/src/video/fb_present.c w/src/video/fb_present.c
 index 08bae4b..f12235a 100644
 --- c/src/video/fb_present.c
-+++ i/src/video/fb_present.c
++++ w/src/video/fb_present.c
 @@ -15,12 +15,15 @@
   * Off unless RECOMP_FB_WINDOW is set.
   */
@@ -9684,11 +9911,11 @@ index 08bae4b..f12235a 100644
 -void xbox_FramebufferWindowSetTitle(const uint16_t *n, int m) { (void)n; (void)m; }
 -void xbox_FramebufferWindowFrameStats(uint32_t draws) { (void)draws; }
  #endif
-diff --git c/src/video/fb_present_sdl.c i/src/video/fb_present_sdl.c
+diff --git c/src/video/fb_present_sdl.c w/src/video/fb_present_sdl.c
 new file mode 100644
 index 0000000..d5f3e1a
 --- /dev/null
-+++ i/src/video/fb_present_sdl.c
++++ w/src/video/fb_present_sdl.c
 @@ -0,0 +1,493 @@
 +/**
 + * POSIX counterpart of fb_present.c: show the guest framebuffer in an SDL2
@@ -10183,11 +10410,11 @@ index 0000000..d5f3e1a
 +        s_fb_running = 0;
 +}
 +#endif /* !_WIN32 */
-diff --git c/src/video/fb_present_web.c i/src/video/fb_present_web.c
+diff --git c/src/video/fb_present_web.c w/src/video/fb_present_web.c
 new file mode 100644
 index 0000000..4f2e829
 --- /dev/null
-+++ i/src/video/fb_present_web.c
++++ w/src/video/fb_present_web.c
 @@ -0,0 +1,273 @@
 +/**
 + * Browser counterpart of fb_present_sdl.c: the guest framebuffer for a page.
@@ -10462,11 +10689,11 @@ index 0000000..4f2e829
 +            s_fb_width, s_fb_height);
 +}
 +#endif /* __EMSCRIPTEN__ */
-diff --git c/src/video/gpu_present.c i/src/video/gpu_present.c
+diff --git c/src/video/gpu_present.c w/src/video/gpu_present.c
 new file mode 100644
 index 0000000..7b3408b
 --- /dev/null
-+++ i/src/video/gpu_present.c
++++ w/src/video/gpu_present.c
 @@ -0,0 +1,381 @@
 +/*
 + * D3D11 presentation for the framebuffer window (ROADMAP Phase 2.1).
@@ -10849,11 +11076,11 @@ index 0000000..7b3408b
 +    return s_rtv != NULL;
 +}
 +#endif
-diff --git c/src/video/gpu_present.h i/src/video/gpu_present.h
+diff --git c/src/video/gpu_present.h w/src/video/gpu_present.h
 new file mode 100644
 index 0000000..8891786
 --- /dev/null
-+++ i/src/video/gpu_present.h
++++ w/src/video/gpu_present.h
 @@ -0,0 +1,17 @@
 +/* D3D11 presentation for the framebuffer window (see gpu_present.c). */
 +#ifndef XBOX_GPU_PRESENT_H
@@ -10872,10 +11099,10 @@ index 0000000..8891786
 +void gpu_present_shutdown(void);
 +#endif
 +#endif
-diff --git c/src/video/video_player.h i/src/video/video_player.h
+diff --git c/src/video/video_player.h w/src/video/video_player.h
 index c844aef..bc4d39c 100644
 --- c/src/video/video_player.h
-+++ i/src/video/video_player.h
++++ w/src/video/video_player.h
 @@ -62,13 +62,26 @@ int  video_dump_frame_bmp(const char *path);
   * zero when there is no window, which is the right answer: with nothing to
   * focus there is nothing to type into. */
@@ -10903,10 +11130,10 @@ index c844aef..bc4d39c 100644
 +void xbox_FramebufferSetGammaRamp(const uint8_t *r, const uint8_t *g, const uint8_t *b);
  
  #endif /* BURNOUT3_VIDEO_PLAYER_H */
-diff --git c/templates/runtime/recomp_types.h i/templates/runtime/recomp_types.h
+diff --git c/templates/runtime/recomp_types.h w/templates/runtime/recomp_types.h
 index 8e9325e..e2089b0 100644
 --- c/templates/runtime/recomp_types.h
-+++ i/templates/runtime/recomp_types.h
++++ w/templates/runtime/recomp_types.h
 @@ -410,6 +410,56 @@ void recomp_trace_esp(const char *name, const char *tag);
   * uintptr_t cast preserves the overflow bits, landing us 4GB+ past
   * our mapping and causing access violations.
@@ -11025,11 +11252,11 @@ index 8e9325e..e2089b0 100644
  /* ================================================================
   * Register name aliases for generated code
   *
-diff --git c/tests/kernel_eeprom_settings/CMakeLists.txt i/tests/kernel_eeprom_settings/CMakeLists.txt
+diff --git c/tests/kernel_eeprom_settings/CMakeLists.txt w/tests/kernel_eeprom_settings/CMakeLists.txt
 new file mode 100644
 index 0000000..42f6fa3
 --- /dev/null
-+++ i/tests/kernel_eeprom_settings/CMakeLists.txt
++++ w/tests/kernel_eeprom_settings/CMakeLists.txt
 @@ -0,0 +1,9 @@
 +cmake_minimum_required(VERSION 3.20)
 +project(kernel_eeprom_settings_test C)
@@ -11040,11 +11267,11 @@ index 0000000..42f6fa3
 +target_link_libraries(kernel_eeprom_settings_test PRIVATE xboxrecomp)
 +enable_testing()
 +add_test(NAME kernel_eeprom_settings_test COMMAND kernel_eeprom_settings_test)
-diff --git c/tests/kernel_eeprom_settings/test_main.c i/tests/kernel_eeprom_settings/test_main.c
+diff --git c/tests/kernel_eeprom_settings/test_main.c w/tests/kernel_eeprom_settings/test_main.c
 new file mode 100644
 index 0000000..e9d2195
 --- /dev/null
-+++ i/tests/kernel_eeprom_settings/test_main.c
++++ w/tests/kernel_eeprom_settings/test_main.c
 @@ -0,0 +1,90 @@
 +/* The EEPROM user settings: the time zone is the host's, and XC_MAX_OS --
 + * the whole block, which XAPI reads in one query -- agrees with the single
@@ -11136,11 +11363,11 @@ index 0000000..e9d2195
 +           (long)bias);
 +    return 0;
 +}
-diff --git c/tests/kernel_fatx_overwrite/CMakeLists.txt i/tests/kernel_fatx_overwrite/CMakeLists.txt
+diff --git c/tests/kernel_fatx_overwrite/CMakeLists.txt w/tests/kernel_fatx_overwrite/CMakeLists.txt
 new file mode 100644
 index 0000000..50c2912
 --- /dev/null
-+++ i/tests/kernel_fatx_overwrite/CMakeLists.txt
++++ w/tests/kernel_fatx_overwrite/CMakeLists.txt
 @@ -0,0 +1,11 @@
 +cmake_minimum_required(VERSION 3.20)
 +project(kernel_fatx_overwrite_test C)
@@ -11153,11 +11380,11 @@ index 0000000..50c2912
 +target_link_libraries(kernel_fatx_overwrite_test PRIVATE xboxrecomp)
 +enable_testing()
 +add_test(NAME kernel_fatx_overwrite_test COMMAND kernel_fatx_overwrite_test)
-diff --git c/tests/kernel_fatx_overwrite/test_main.c i/tests/kernel_fatx_overwrite/test_main.c
+diff --git c/tests/kernel_fatx_overwrite/test_main.c w/tests/kernel_fatx_overwrite/test_main.c
 new file mode 100644
 index 0000000..f2ad34e
 --- /dev/null
-+++ i/tests/kernel_fatx_overwrite/test_main.c
++++ w/tests/kernel_fatx_overwrite/test_main.c
 @@ -0,0 +1,437 @@
 +/*
 + * FATX overwrite: regrowing after an overwrite keeps the data.
@@ -11596,11 +11823,11 @@ index 0000000..f2ad34e
 +    printf("\n%d failure(s)\n", failures);
 +    return failures ? 1 : 0;
 +}
-diff --git c/tests/kernel_file_relative/CMakeLists.txt i/tests/kernel_file_relative/CMakeLists.txt
+diff --git c/tests/kernel_file_relative/CMakeLists.txt w/tests/kernel_file_relative/CMakeLists.txt
 new file mode 100644
 index 0000000..25d7224
 --- /dev/null
-+++ i/tests/kernel_file_relative/CMakeLists.txt
++++ w/tests/kernel_file_relative/CMakeLists.txt
 @@ -0,0 +1,11 @@
 +cmake_minimum_required(VERSION 3.20)
 +project(kernel_file_relative_test C)
@@ -11613,11 +11840,11 @@ index 0000000..25d7224
 +target_link_libraries(kernel_file_relative_test PRIVATE xboxrecomp)
 +enable_testing()
 +add_test(NAME kernel_file_relative_test COMMAND kernel_file_relative_test)
-diff --git c/tests/kernel_file_relative/test_main.c i/tests/kernel_file_relative/test_main.c
+diff --git c/tests/kernel_file_relative/test_main.c w/tests/kernel_file_relative/test_main.c
 new file mode 100644
 index 0000000..20648a5
 --- /dev/null
-+++ i/tests/kernel_file_relative/test_main.c
++++ w/tests/kernel_file_relative/test_main.c
 @@ -0,0 +1,150 @@
 +/*
 + * Opens relative to a RootDirectory handle, on every host.
@@ -11769,11 +11996,11 @@ index 0000000..20648a5
 +    printf("%s (%d failure%s)\n", failures ? "FAILED" : "OK", failures, failures == 1 ? "" : "s");
 +    return failures ? 1 : 0;
 +}
-diff --git c/tests/kernel_memory_bridge_posix/test_main.c i/tests/kernel_memory_bridge_posix/test_main.c
+diff --git c/tests/kernel_memory_bridge_posix/test_main.c w/tests/kernel_memory_bridge_posix/test_main.c
 new file mode 100644
 index 0000000..5fb3363
 --- /dev/null
-+++ i/tests/kernel_memory_bridge_posix/test_main.c
++++ w/tests/kernel_memory_bridge_posix/test_main.c
 @@ -0,0 +1,403 @@
 +/*
 + * Kernel thread objects and file bridges, through the path a title takes.
@@ -12178,10 +12405,123 @@ index 0000000..5fb3363
 +    printf("\n%d failure(s)\n", failures);
 +    return failures ? 1 : 0;
 +}
-diff --git c/tools/recomp/translator.py i/tools/recomp/translator.py
+diff --git c/tests/kernel_mods/CMakeLists.txt w/tests/kernel_mods/CMakeLists.txt
+new file mode 100644
+index 0000000..7262e70
+--- /dev/null
++++ w/tests/kernel_mods/CMakeLists.txt
+@@ -0,0 +1,8 @@
++cmake_minimum_required(VERSION 3.20)
++project(kernel_mods_test C)
++set(CMAKE_C_STANDARD 11)
++# kernel_mods.c is plain C with no runtime dependencies: build it alone.
++add_executable(kernel_mods_test test_main.c ../../src/kernel/kernel_mods.c)
++target_include_directories(kernel_mods_test PRIVATE ../../src/kernel)
++enable_testing()
++add_test(NAME kernel_mods_test COMMAND kernel_mods_test)
+diff --git c/tests/kernel_mods/test_main.c w/tests/kernel_mods/test_main.c
+new file mode 100644
+index 0000000..7d95d82
+--- /dev/null
++++ w/tests/kernel_mods/test_main.c
+@@ -0,0 +1,93 @@
++/* kernel_mods: load order, name checks and lookup order. */
++#include "kernel_mods.h"
++
++#include <ctype.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/stat.h>
++#ifdef _WIN32
++#include <direct.h>
++#define MKDIR(p) _mkdir(p)
++#else
++#define MKDIR(p) mkdir(p, 0755)
++#endif
++
++static int fails;
++#define CHECK(c) do { if (!(c)) { fprintf(stderr, "FAIL %s:%d %s\n", __FILE__, __LINE__, #c); fails++; } } while (0)
++
++static char root[256];
++
++static void put(const char *rel, const char *text)
++{
++    char p[512];
++    FILE *f;
++    snprintf(p, sizeof p, "%s/%s", root, rel);
++    f = fopen(p, "wb");
++    if (!f) { perror(p); exit(2); }
++    fputs(text, f);
++    fclose(f);
++}
++
++static void dir(const char *rel)
++{
++    char p[512];
++    snprintf(p, sizeof p, "%s/%s", root, rel);
++    MKDIR(p);
++}
++
++static int file_exists(char *path)
++{
++    FILE *f = fopen(path, "rb");
++    if (f) fclose(f);
++    return f != NULL;
++}
++
++/* Stands in for a case-insensitive lookup: the files on "disk" are lower case. */
++static int lower_then_exists(char *path)
++{
++    char *base = strrchr(path, '/');
++    for (char *p = base ? base : path; *p; p++)
++        *p = (char)tolower((unsigned char)*p);
++    return file_exists(path);
++}
++
++int main(void)
++{
++    char out[512];
++    const char *tmp = getenv("TMPDIR");
++    snprintf(root, sizeof root, "%s/kernel_mods_test_%d", tmp && *tmp ? tmp : "/tmp", (int)(size_t)&out % 100000);
++    MKDIR(root);
++    dir("a"); dir("a/data"); dir("b"); dir("b/data");
++    put("a/data/both.big", "a");
++    put("a/data/only_a.big", "a");
++    put("b/data/both.big", "b");
++    put("b/data/upper.big", "b");
++    put("load-order.txt", "# comment\r\n\r\n  a  \r\n../escape\r\nx/y\r\nb\r\n");
++
++    CHECK(xbox_mods_init(root) == 2);
++    CHECK(xbox_mods_count() == 2);
++    CHECK(strcmp(xbox_mods_dir(), root) == 0);
++    CHECK(strcmp(xbox_mods_name(0), "a") == 0);
++    CHECK(strcmp(xbox_mods_name(1), "b") == 0);
++    CHECK(xbox_mods_name(2) == NULL);
++
++    CHECK(xbox_mods_lookup("data/both.big", out, sizeof out, file_exists) == 2);   /* later line wins */
++    CHECK(strstr(out, "/b/data/both.big") != NULL);
++    CHECK(xbox_mods_lookup("data/only_a.big", out, sizeof out, file_exists) == 1);
++    CHECK(xbox_mods_lookup("/data/only_a.big", out, sizeof out, file_exists) == 1);
++    CHECK(xbox_mods_lookup("data/none.big", out, sizeof out, file_exists) == 0);
++    CHECK(xbox_mods_lookup("data/../load-order.txt", out, sizeof out, file_exists) == 0);
++    CHECK(xbox_mods_lookup("data/UPPER.BIG", out, sizeof out, lower_then_exists) == 2);
++
++    CHECK(xbox_mods_init(NULL) == 0);
++    CHECK(xbox_mods_lookup("data/both.big", out, sizeof out, file_exists) == 0);
++    {
++        char missing[300];
++        snprintf(missing, sizeof missing, "%s/nope", root);
++        CHECK(xbox_mods_init(missing) == 0);
++    }
++    if (!fails)
++        printf("kernel_mods: all checks passed\n");
++    return fails != 0;
++}
+diff --git c/tools/recomp/translator.py w/tools/recomp/translator.py
 index 3cd9250..0e9c350 100644
 --- c/tools/recomp/translator.py
-+++ i/tools/recomp/translator.py
++++ w/tools/recomp/translator.py
 @@ -1311,6 +1311,36 @@ class FunctionTranslator:
                      return 0
          return 0

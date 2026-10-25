@@ -16,13 +16,17 @@ mkdir -p "$DEST"
 DEST=$(realpath "$DEST")
 
 echo "binaries and libraries"
+# A folder made before keeps its launcher.ini (the player's settings).
+ini_keep=
+[ -f "$DEST/bin/launcher.ini" ] && { ini_keep=$(mktemp); cp "$DEST/bin/launcher.ini" "$ini_keep"; }
 rm -rf "$DEST/bin" "$DEST/lib" && cp -r "$OUT/bin" "$OUT/lib" "$DEST/"
 
 echo "game files (a real copy, ~2 GB)"
 mkdir -p "$DEST/game"
 cp "$HERE/game/default.xbe" "$DEST/game/"
 [ -e "$DEST/game/data" ] || cp -rL "$HERE/game/data" "$DEST/game/data"
-[ -d "$HERE/game/UDATA" ] && cp -r "$HERE/game/UDATA" "$DEST/game/" 2>/dev/null || true   # your saves
+# Your saves, only into a folder that has none: a re-run must not roll back saves made in the folder.
+if [ -d "$HERE/game/UDATA" ] && [ ! -e "$DEST/game/UDATA" ]; then cp -r "$HERE/game/UDATA" "$DEST/game/"; fi
 
 echo "HD pack, mods, keys"
 rm -rf "$DEST/hd-textures" && cp -rL "$HERE/hd-textures" "$DEST/hd-textures"
@@ -34,14 +38,19 @@ done
 cp "$HERE/keys.example.ini" "$DEST/"
 [ -f "$HERE/keys.ini" ] && cp "$HERE/keys.ini" "$DEST/"
 # The launcher's settings, without the game folder path: it then finds game/ itself.
-[ -f "$HERE/build-linux/launcher.ini" ] && grep -v '^game_dir=' "$HERE/build-linux/launcher.ini" > "$DEST/bin/launcher.ini"
+if [ -n "$ini_keep" ]; then mv "$ini_keep" "$DEST/bin/launcher.ini"
+elif [ -f "$HERE/build-linux/launcher.ini" ]; then grep -v '^game_dir=' "$HERE/build-linux/launcher.ini" > "$DEST/bin/launcher.ini"
+fi
 
-# Start scripts: bundled libraries first, and no saved game path (the folder can move).
+# Start scripts: bundled libraries first. The launcher saves the game folder as a full path, so a moved
+# folder would point at the old place: a saved path with no default.xbe is dropped, and game/ is found again.
 start_script() {   # $1 file, $2 launcher argument
     cat > "$1" <<EOS
 #!/bin/sh
 here=\$(cd "\$(dirname "\$0")" && pwd)
-[ -f "\$here/bin/launcher.ini" ] && sed -i '/^game_dir=/d' "\$here/bin/launcher.ini"
+ini="\$here/bin/launcher.ini"
+gd=\$(sed -n 's/^game_dir=//p' "\$ini" 2>/dev/null)
+[ -n "\$gd" ] && [ ! -f "\$gd/default.xbe" ] && sed -i '/^game_dir=/d' "\$ini"
 export LD_LIBRARY_PATH="\$here/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}"
 cd "\$here/bin" && exec ./launcher $2
 EOS
@@ -54,6 +63,8 @@ cat > "$DEST/install-shortcuts.sh" <<'EOS'
 #!/bin/sh
 # App-menu entries for "Play SSX 3" and "SSX 3 Settings", pointing at this folder.
 here=$(cd "$(dirname "$0")" && pwd)
+# Exec= field codes: % is %%, and " ` $ \ are escaped inside the quotes.
+exec_here=$(printf '%s' "$here" | sed -e 's/%/%%/g' -e 's/[\\"`$]/\\\\&/g')
 apps="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
 mkdir -p "$apps"
 for e in "play:Play SSX 3:Play SSX 3.sh" "settings:SSX 3 Settings:SSX 3 Settings.sh"; do
@@ -62,7 +73,7 @@ for e in "play:Play SSX 3:Play SSX 3.sh" "settings:SSX 3 Settings:SSX 3 Settings
 [Desktop Entry]
 Type=Application
 Name=$name
-Exec="$here/$script"
+Exec="$exec_here/$script"
 Path=$here
 Icon=applications-games
 Categories=Game;

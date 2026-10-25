@@ -81,6 +81,9 @@ disk/
 build-linux/
 /game
 build-linux-abi/
+build-portable/
+build-portable-spv/
+build-portable.cmake.log
 build-vk/
 build-linux/
 tk/

@@ -18,9 +18,16 @@ BC7 = (98, 99)
 
 def read_level(path):
     d = open(path, "rb").read()
+    if len(d) < HEADER:
+        raise SystemExit(f"{path}: too short for a DDS")
     if d[:4] != b"DDS " or d[84:88] != b"DX10" or struct.unpack_from("<I", d, 128)[0] not in BC7:
         raise SystemExit(f"{path}: not a DX10 BC7 DDS")
     h, w = struct.unpack_from("<II", d, 12)
+    if struct.unpack_from("<I", d, 28)[0] > 1:
+        raise SystemExit(f"{path}: has a mip chain already; give one level per file")
+    want = HEADER + ((w + 3) // 4) * ((h + 3) // 4) * 16
+    if len(d) != want:
+        raise SystemExit(f"{path}: {len(d)} bytes, a {w}x{h} BC7 level is {want}")
     return d, w, h
 
 

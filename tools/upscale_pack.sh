@@ -60,6 +60,12 @@ export -f encode_one
 export WORK BC7ENC HERE
 ls "$WORK"/up/*.png | xargs -P "$JOBS" -I{} nice bash -c 'encode_one "$1"' _ {} > "$WORK/bc7.log" 2>&1 || true
 cd "$WORK/up"
+n_png=$(ls ./*.png | wc -l); n_dds=$(ls ./*.dds 2>/dev/null | wc -l)
+if [ "$n_dds" -ne "$n_png" ]; then
+    echo "$((n_png - n_dds)) of $n_png textures failed to encode; see the log:" >&2
+    tail -20 "$WORK/bc7.log" >&2
+    exit 1
+fi
 
 {
     echo "# Real-ESRGAN $MODEL x4 of the game's own textures (tools/upscale_pack.sh)"

@@ -615,7 +615,8 @@ static void play(void)
         return;
     }
     save_settings();
-    have_dm = SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(s_win), &dm) == 0 && dm.h > 0;
+    /* --play has no window: the main display then. */
+    have_dm = SDL_GetDesktopDisplayMode(s_win ? SDL_GetWindowDisplayIndex(s_win) : 0, &dm) == 0 && dm.h > 0;
 
     env_set("RECOMP_GAME_DIR", s_path);
     env_set("RECOMP_KEYBOARD", "1");
@@ -1140,13 +1141,33 @@ int main(int argc, char **argv)
 {
     char *slash;
     int running = 1, height = 760;
-    (void)argc;
-
     if (!realpath("/proc/self/exe", s_dir) && !realpath(argv[0], s_dir))
         snprintf(s_dir, sizeof s_dir, ".");
     if ((slash = strrchr(s_dir, '/')) != NULL)
         *slash = 0;
     snprintf(s_ini, sizeof s_ini, "%s/launcher.ini", s_dir);
+
+    /* --play: the saved settings, straight into the game, no window -- for a
+     * desktop "Play" icon or Steam's gaming mode, where only a controller is at
+     * hand. The same steps as the Play button. */
+    if (argc > 1 && !strcmp(argv[1], "--play")) {
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) {
+            fprintf(stderr, "launcher: SDL_Init: %s\n", SDL_GetError());
+            return 1;
+        }
+        ini_load();
+        load_settings();
+        mods_scan();                    /* play() saves the mod list: read it first */
+        update_pads();
+        update_status();
+        if (!s_game_ok) {
+            fprintf(stderr, "launcher: %s\n", s_status);
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "SSX 3", s_status, NULL);
+            return 1;
+        }
+        play();                         /* returns only if the game could not start */
+        return 1;
+    }
 
     if (!getenv("SDL_VIDEO_WAYLAND_WMCLASS") && !getenv("SDL_VIDEO_X11_WMCLASS")) {
         setenv("SDL_VIDEO_WAYLAND_WMCLASS", "ssx3-launcher", 1);

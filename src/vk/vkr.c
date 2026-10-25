@@ -1137,6 +1137,16 @@ VkrContext *vkr_create(void)
         f14.pushDescriptor = VK_TRUE;
         f13.pNext = &f14;
     } else {
+        VkExtensionProperties ext[512];
+        uint32_t ne = 512, k;
+        if (vkEnumerateDeviceExtensionProperties(c->phys, NULL, &ne, ext) < 0) ne = 0;
+        for (k = 0; k < ne && strcmp(ext[k].extensionName, push_ext); k++)
+            ;
+        if (k == ne) {
+            fprintf(stderr, "[VKR] the driver has Vulkan %u.%u without %s: needs Vulkan 1.4 or that extension\n",
+                    VK_API_VERSION_MAJOR(dev_api), VK_API_VERSION_MINOR(dev_api), push_ext);
+            goto fail;
+        }
         di.enabledExtensionCount = 1; di.ppEnabledExtensionNames = &push_ext;
     }
     di.pNext = &f13; di.queueCreateInfoCount = 1; di.pQueueCreateInfos = &qi;

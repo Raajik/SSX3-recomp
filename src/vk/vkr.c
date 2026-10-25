@@ -24,6 +24,11 @@
 #include <time.h>
 #endif
 
+/* Fetched from the device: loaders before Vulkan 1.4 (Ubuntu 24.04's 1.3.275)
+ * do not export vkCmdPushDescriptorSet, and a 1.3 driver has only the KHR one. */
+static PFN_vkCmdPushDescriptorSet vkr_push_desc;
+#define vkCmdPushDescriptorSet vkr_push_desc
+
 static double vkr_now_ms(void)
 {
 #ifdef _WIN32
@@ -1051,6 +1056,8 @@ VkrContext *vkr_create(void)
     VkFenceCreateInfo fi = {VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
     void *map;
     int f;
+    uint32_t dev_api;
+    const char *push_ext = VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME;
 
     if (!c) return NULL;
     c->bc7 = -1;
@@ -1074,6 +1081,7 @@ VkrContext *vkr_create(void)
     {
         VkPhysicalDeviceProperties p;
         vkGetPhysicalDeviceProperties(c->phys, &p);
+        dev_api = p.apiVersion;
         /* NVIDIA packs the driver version 10.8.8.6 bits, others like Vulkan */
         if (p.vendorID == 0x10DE)
             fprintf(stderr, "[VKR] device: %s (Vulkan %u.%u, driver %u.%u)\n", p.deviceName,
@@ -1142,10 +1150,21 @@ VkrContext *vkr_create(void)
         di.pEnabledFeatures = &en;
     }
     f13.dynamicRendering = VK_TRUE; f13.synchronization2 = VK_TRUE;
-    f14.pushDescriptor = VK_TRUE;
-    f13.pNext = &f14;
+    if (VK_API_VERSION_MINOR(dev_api) >= 4 || VK_API_VERSION_MAJOR(dev_api) > 1) {
+        f14.pushDescriptor = VK_TRUE;
+        f13.pNext = &f14;
+    } else {
+        di.enabledExtensionCount = 1; di.ppEnabledExtensionNames = &push_ext;
+    }
     di.pNext = &f13; di.queueCreateInfoCount = 1; di.pQueueCreateInfos = &qi;
     if (vkCreateDevice(c->phys, &di, NULL, &c->dev) != VK_SUCCESS) goto fail;
+    vkr_push_desc = (PFN_vkCmdPushDescriptorSet)vkGetDeviceProcAddr(c->dev, "vkCmdPushDescriptorSet");
+    if (!vkr_push_desc)
+        vkr_push_desc = (PFN_vkCmdPushDescriptorSet)vkGetDeviceProcAddr(c->dev, "vkCmdPushDescriptorSetKHR");
+    if (!vkr_push_desc) {
+        fprintf(stderr, "[VKR] the driver has no push descriptors (Vulkan 1.4 or VK_KHR_push_descriptor)\n");
+        goto fail;
+    }
     vkGetDeviceQueue(c->dev, c->qfam, 0, &c->queue);
     pci.queueFamilyIndex = c->qfam;
     pci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;

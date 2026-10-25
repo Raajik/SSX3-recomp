@@ -30,10 +30,15 @@ Fedora 44 ships SDL2 as `sdl2-compat` on top of SDL3, and the game runs on it
 as is. Everything for the game and the launcher:
 
 ```bash
-sudo dnf install gcc gcc-c++ cmake ninja-build git python3 sdl2-compat-devel \
+sudo dnf install gcc gcc-c++ cmake ninja-build git git-lfs python3 sdl2-compat-devel \
     SDL2_ttf-devel fontconfig-devel libepoxy-devel openssl-devel \
     vulkan-headers vulkan-loader-devel glslc
 ```
+
+The HD texture pack (`hd-textures/`) is stored with Git LFS. Without git-lfs a clone holds 131-byte pointer
+files there, and every HD texture fails with `not a DX10 DDS` in the log. After installing it, in the clone:
+`git lfs install --local --skip-repo && git lfs pull --include "hd-textures/**"` (`--skip-repo` leaves git hooks
+alone).
 
 Fedora's ffmpeg has no libx264, which `RECOMP_RECORD` uses.
 

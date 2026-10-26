@@ -715,7 +715,8 @@ static void frame(int x, int y, int w, int h, SDL_Color c)
 }
 
 /* Draws text with its top-left at (x, y), clipped to max_w logical pixels
- * (0 = none); wrap > 0 wraps at that width. Returns the height used. */
+ * (0 = none; > 0 keeps the end, < 0 keeps the start); wrap > 0 wraps at that
+ * width. Returns the height used. */
 static int text(TTF_Font *f, const char *s, int x, int y, SDL_Color c, int max_w, int wrap)
 {
     SDL_Surface *sf;
@@ -737,6 +738,8 @@ static int text(TTF_Font *f, const char *s, int x, int y, SDL_Color c, int max_w
         /* Too long for its box: keep the end, which is what tells two paths apart. */
         src.x = src.w - S(max_w);
         src.w = S(max_w);
+    } else if (max_w < 0 && src.w > S(-max_w)) {
+        src.w = S(-max_w);              /* a label: keep its start */
     }
     dst.x = S(x);
     dst.y = S(y);
@@ -822,7 +825,7 @@ static void checkbox(int x, int y, int w, const char *label, int *val)
         fill(x, y + 3, 16, 16, hot ? C_HOVER : C_BG);
         frame(x, y + 3, 16, 16, C_BORDER);
     }
-    text(s_font, label, x + 24, y + (22 - font_h(s_font)) / 2, C_TEXT, 0, 0);
+    text(s_font, label, x + 24, y + (22 - font_h(s_font)) / 2, C_TEXT, -(w - 24), 0);
     if (hot && s_click)
         *val = !*val;
 }

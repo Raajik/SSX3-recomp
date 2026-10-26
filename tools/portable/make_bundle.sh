@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Make the one-click SSX3/ folder (specs: ~/specs/ssx3-bundle.md) from a portable
+# Make the one-click SSX3/ folder (docs/LINUX.md) from a portable
 # build (build_portable.sh, then bin/ + lib/ with the bundled libraries).
 #
 #   tools/portable/make_bundle.sh BUILD_OUT DEST
